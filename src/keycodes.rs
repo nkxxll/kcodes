@@ -83,10 +83,10 @@ pub enum Keycode {
     KcTrns,
 }
 
-pub(crate) struct StringToKeycodeError;
+pub struct StringToKeycodeError;
 
 impl Keycode {
-    pub(crate) fn as_str(self) -> String {
+    pub(crate) fn as_str(&self) -> String {
         match self {
             Keycode::Kc1 => String::from("KC_1"),
             Keycode::Kc2 => String::from("KC_2"),
@@ -162,7 +162,7 @@ impl Keycode {
 impl FromStr for Keycode {
     type Err = StringToKeycodeError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match &*s {
+        match s {
             "1" => Ok(Keycode::Kc1),
             "2" => Ok(Keycode::Kc2),
             "3" => Ok(Keycode::Kc3),
@@ -214,6 +214,8 @@ impl FromStr for Keycode {
             "}" => Ok(Keycode::KcRcbr),
             "(" => Ok(Keycode::KcLprn),
             ")" => Ok(Keycode::KcRprn),
+            ">" => Ok(Keycode::KcGt),
+            "<" => Ok(Keycode::KcLt),
             "&" => Ok(Keycode::KcAmpr),
             "|" => Ok(Keycode::KcPipe),
             "^" => Ok(Keycode::KcCirc),
@@ -224,7 +226,9 @@ impl FromStr for Keycode {
             "*" => Ok(Keycode::KcAstr),
             "/" => Ok(Keycode::KcSlsh),
             "\\" => Ok(Keycode::KcBsls),
-            "\"" => Ok(Keycode::KcQuot),
+            "\"" => Ok(Keycode::KcDquo),
+            "'" => Ok(Keycode::KcQuot),
+            "_" => Ok(Keycode::KcUnds),
             "__" => Ok(Keycode::KcTrns),
             _ => Err(StringToKeycodeError),
         }
@@ -244,10 +248,10 @@ impl Layer {
         // todo: this has to have a more elegant solution because there are not always 12 keys in a row
         self.state.push_str(&code.as_str());
         if self.count_keys % self.dim.width == 0 {
-            self.state.push_str("\n");
+            self.state.push('\n');
         }
         if self.count_keys % self.dim.width == 1 {
-            self.state.push_str("\t");
+            self.state.push('\t');
         }
         self.count_keys += 1;
     }
