@@ -1,18 +1,11 @@
 use std::str::FromStr;
 
-#[derive(Default)]
-pub struct Dimension {
-    pub height: usize,
-    pub width: usize,
-}
-
-#[derive(Default)]
+#[derive(Debug)]
 pub struct Layer {
-    pub state: String,
-    pub dim: Dimension,
-    pub count_keys: usize,
+    keys: Vec<Keycode>,
 }
 
+#[derive(Debug, PartialEq)]
 pub enum Keycode {
     Kc1,
     Kc2,
@@ -83,6 +76,7 @@ pub enum Keycode {
     KcTrns,
 }
 
+#[derive(Debug)]
 pub struct StringToKeycodeError;
 
 impl Keycode {
@@ -237,35 +231,24 @@ impl FromStr for Keycode {
 
 impl Layer {
     /// create the first line with the name of the layer of keycodes
-    pub(crate) fn new(name: String, height: usize, width: usize) -> Self {
-        Self {
-            state: format!("[{}] = LAYOUT_ergodox_pretty(\n", name).to_string(),
-            dim: Dimension { height, width },
-            count_keys: 0,
-        }
+    pub(crate) fn new() -> Self {
+        Self { keys: vec![] }
     }
-    pub(crate) fn add_key(&mut self, code: Keycode) {
-        // todo: this has to have a more elegant solution because there are not always 12 keys in a row
-        self.state.push_str(&code.as_str());
-        if self.count_keys % self.dim.width == 0 {
-            self.state.push('\n');
-        }
-        if self.count_keys % self.dim.width == 1 {
-            self.state.push('\t');
-        }
-        self.count_keys += 1;
+    /// parses a string to a vec of keycodes
+    /// the keycodes in the string are delimited by a space or a new line
+    /// or any other whitespace
+    ///
+    /// * `s`: string to parse
+    pub(crate) fn parse_string_to_keycodes(&mut self, s: String) {
+        self.keys = s
+            .split_whitespace()
+            .map(|x| Keycode::from_str(x).expect("There was an error while parsing the keycodes"))
+            .collect::<Vec<Keycode>>()
     }
-
-    pub(crate) fn add_default_thumb(&mut self) {
-        self.state.push_str("KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT,\n\t\t\t\tKC_TRANSPARENT, KC_TRANSPARENT,\n\t\tKC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT, KC_TRANSPARENT\n");
-    }
-
-    pub(crate) fn close_layer(&mut self) {
-        self.state.push_str("\n},\n");
-    }
-
-    pub(crate) fn get_layer(&self) -> String {
-        self.state.clone()
+    pub(crate) fn keys_to_string_vec(&self) -> Vec<String> {
+        let mut res: Vec<String> = vec![];
+        self.keys.iter().map(|x| res.push(x.as_str()));
+        res
     }
 }
 
@@ -273,6 +256,37 @@ impl Layer {
 mod tests {
     #[test]
     fn little_parsing_test() {
-        todo!();
+        let test_string = String::from("a b c d e f g h i j k l m n o p q r s t u v w x y z");
+        let expected_layer = vec![
+            super::Keycode::KcA,
+            super::Keycode::KcB,
+            super::Keycode::KcC,
+            super::Keycode::KcD,
+            super::Keycode::KcE,
+            super::Keycode::KcF,
+            super::Keycode::KcG,
+            super::Keycode::KcH,
+            super::Keycode::KcI,
+            super::Keycode::KcJ,
+            super::Keycode::KcK,
+            super::Keycode::KcL,
+            super::Keycode::KcM,
+            super::Keycode::KcN,
+            super::Keycode::KcO,
+            super::Keycode::KcP,
+            super::Keycode::KcQ,
+            super::Keycode::KcR,
+            super::Keycode::KcS,
+            super::Keycode::KcT,
+            super::Keycode::KcU,
+            super::Keycode::KcV,
+            super::Keycode::KcW,
+            super::Keycode::KcX,
+            super::Keycode::KcY,
+            super::Keycode::KcZ,
+        ];
+        let mut layer = super::Layer::new();
+        layer.parse_string_to_keycodes(test_string);
+        assert_eq!(layer.keys, expected_layer);
     }
 }

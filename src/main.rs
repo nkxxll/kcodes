@@ -1,10 +1,12 @@
 use std::fs;
+use std::str::FromStr;
 
 use clap::Parser;
 
 use crate::keycodes::Keycode;
 use crate::keycodes::Layer;
 
+mod ergodox_ez;
 mod keycodes;
 
 #[derive(Parser, Debug)]
@@ -28,7 +30,6 @@ fn main() {
     let args = Args::parse();
     let input = fs::read_to_string(&args.file).expect("No file with this name!");
     let key_lines: Vec<&str> = input.lines().collect();
-    // let layer = Layer::new(args.name, args.rows, args.columns);
     assert_eq!(key_lines.len(), args.rows);
     let keys = map(key_lines);
     assert_eq!(keys.len(), args.rows * args.columns);
