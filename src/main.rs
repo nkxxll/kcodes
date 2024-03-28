@@ -30,9 +30,9 @@ fn main() {
     let args = Args::parse();
     let input = fs::read_to_string(&args.file).expect("No file with this name!");
     let key_lines: Vec<&str> = input.lines().collect();
-    assert_eq!(key_lines.len(), args.rows);
+    // assert_eq!(key_lines.len(), args.rows);
     let keys = map(key_lines);
-    assert_eq!(keys.len(), args.rows * args.columns);
+    // assert_eq!(keys.len(), args.rows * args.columns);
     print!(
         r#"[{}] = LAYOUT_ergodox_pretty(
     VRSN,    KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_TRNS,     KC_TRNS, KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,

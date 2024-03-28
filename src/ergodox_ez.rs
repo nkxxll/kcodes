@@ -3,7 +3,6 @@ use dyn_fmt::AsStrFormatExt;
 
 pub struct Ergodox {
     pub layer: Layer,
-    pub name: String,
 }
 
 impl Ergodox {
@@ -12,7 +11,7 @@ impl Ergodox {
     }
     pub fn create_layer(&self) -> String {
         let mut res: String = "".to_string();
-        let header: String = format!("[{}] = LAYOUT_ergodox_pretty(", self.name).to_string();
+        let header: String = format!("[{}] = LAYOUT_ergodox_pretty(", self.layer.name).to_string();
         // note: first second and fourth line have 14 keys
         // thrid has 12 keys
         // fifth has 10 keys

@@ -2,6 +2,7 @@ use std::str::FromStr;
 
 #[derive(Debug)]
 pub struct Layer {
+    pub name: String,
     keys: Vec<Keycode>,
 }
 
@@ -231,8 +232,8 @@ impl FromStr for Keycode {
 
 impl Layer {
     /// create the first line with the name of the layer of keycodes
-    pub(crate) fn new() -> Self {
-        Self { keys: vec![] }
+    pub(crate) fn new(name: String) -> Self {
+        Self { name, keys: vec![] }
     }
     /// parses a string to a vec of keycodes
     /// the keycodes in the string are delimited by a space or a new line
@@ -247,7 +248,7 @@ impl Layer {
     }
     pub(crate) fn keys_to_string_vec(&self) -> Vec<String> {
         let mut res: Vec<String> = vec![];
-        self.keys.iter().map(|x| res.push(x.as_str()));
+        self.keys.iter().for_each(|x| res.push(x.as_str()));
         res
     }
 }
@@ -285,7 +286,7 @@ mod tests {
             super::Keycode::KcY,
             super::Keycode::KcZ,
         ];
-        let mut layer = super::Layer::new();
+        let mut layer = super::Layer::new("TEST".to_string());
         layer.parse_string_to_keycodes(test_string);
         assert_eq!(layer.keys, expected_layer);
     }
