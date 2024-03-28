@@ -243,6 +243,7 @@ impl Layer {
     pub(crate) fn parse_string_to_keycodes(&mut self, s: String) {
         self.keys = s
             .split_whitespace()
+            .filter(|x| !x.is_empty())
             .map(|x| Keycode::from_str(x).expect("There was an error while parsing the keycodes"))
             .collect::<Vec<Keycode>>()
     }
@@ -255,9 +256,49 @@ impl Layer {
 
 #[cfg(test)]
 mod tests {
+    use crate::ergodox_ez::Ergodox;
+    #[test]
+    fn little_parsint_test_ergo() {
+        let test_string = String::from("a b c d e f\n g \t\th i j k l m n o p q r s t u v w x y z");
+        let expected_layer = vec![
+            super::Keycode::KcA,
+            super::Keycode::KcB,
+            super::Keycode::KcC,
+            super::Keycode::KcD,
+            super::Keycode::KcE,
+            super::Keycode::KcF,
+            super::Keycode::KcG,
+            super::Keycode::KcH,
+            super::Keycode::KcI,
+            super::Keycode::KcJ,
+            super::Keycode::KcK,
+            super::Keycode::KcL,
+            super::Keycode::KcM,
+            super::Keycode::KcN,
+            super::Keycode::KcO,
+            super::Keycode::KcP,
+            super::Keycode::KcQ,
+            super::Keycode::KcR,
+            super::Keycode::KcS,
+            super::Keycode::KcT,
+            super::Keycode::KcU,
+            super::Keycode::KcV,
+            super::Keycode::KcW,
+            super::Keycode::KcX,
+            super::Keycode::KcY,
+            super::Keycode::KcZ,
+        ];
+        let mut layer = super::Layer::new("TEST".to_string());
+        layer.parse_string_to_keycodes(test_string);
+        let e = Ergodox::new(layer);
+
+        let layout = e.create_layer();
+        dbg!("{}", layout);
+    }
+
     #[test]
     fn little_parsing_test() {
-        let test_string = String::from("a b c d e f g h i j k l m n o p q r s t u v w x y z");
+        let test_string = String::from("a b c d e f\n g \t\th i j k l m n o p q r s t u v w x y z");
         let expected_layer = vec![
             super::Keycode::KcA,
             super::Keycode::KcB,
